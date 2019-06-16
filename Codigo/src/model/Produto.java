@@ -4,7 +4,7 @@ public class Produto {
 
     private int id;
     private String nome;
-    private int categoria;
+    private String categoria;
     private double preco;
     private int quantidade;
 
@@ -20,7 +20,7 @@ public class Produto {
         this.nome = nome;
     }
 
-    public void setCategoria(int categoria) {
+    public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
 
@@ -36,7 +36,7 @@ public class Produto {
         return nome;
     }
 
-    public int getCategoria() {
+    public String getCategoria() {
         return categoria;
     }
 

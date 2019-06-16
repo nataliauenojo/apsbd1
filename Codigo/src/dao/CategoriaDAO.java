@@ -11,10 +11,10 @@ public class CategoriaDAO extends dao.DbConnection {
 
     private Connection conn;
     private final String sqlInsert = "INSERT INTO Categoria (nome) VALUES (?)";
-    private final String sqlUpdate = "UPDATE Categoria SET nome = ? WHERE id = ? ";
-    private final String sqlRemove = "DELETE FROM Categoria WHERE id = ?";
-    private final String sqlList = "SELECT id, nome FROM Categoria ORDER BY id";
-    private final String sqlFind = "SELECT id, nome FROM Categoria WHERE id = ?";
+    private final String sqlUpdate = "UPDATE Categoria SET nome = ? WHERE nome = ? ";
+    private final String sqlRemove = "DELETE FROM Categoria WHERE nome = ?";
+    private final String sqlList = "SELECT nome FROM Categoria ORDER BY nome ";
+    private final String sqlFind = "SELECT nome FROM Categoria WHERE nome = ?";
 
     public void insert(Categoria categoria) throws SQLException {
         PreparedStatement ps = null;
@@ -36,7 +36,7 @@ public class CategoriaDAO extends dao.DbConnection {
             conn = connect();
             ps = conn.prepareStatement(sqlUpdate);
             ps.setString(1, categoria.getNome());
-            ps.setString(2, Integer.toString(categoria.getId()));
+            ps.setString(2, categoria.getAntes());
             ps.execute();
         } finally {
             ps.close();
@@ -44,12 +44,12 @@ public class CategoriaDAO extends dao.DbConnection {
         }
     }
 
-    public void remove(int id) throws SQLException {
+    public void remove(String nome) throws SQLException {
         PreparedStatement ps = null;
         try {
             conn = connect();
             ps = conn.prepareStatement(sqlRemove);
-            ps.setString(1, Integer.toString(id));
+            ps.setString(1, nome);
             ps.execute();
         } finally {
             ps.close();
@@ -69,34 +69,10 @@ public class CategoriaDAO extends dao.DbConnection {
             Categoria categoria;
             while (rs.next()) {
                 categoria = new Categoria();
-                categoria.setId(rs.getInt("id"));
                 categoria.setNome(rs.getString("nome"));
                 list.add(categoria);
             }
             return list;
-        } finally {
-            rs.close();
-            ps.close();
-            close(conn);
-        }
-    }
-
-    public Categoria find(int id) throws SQLException {
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            conn = connect();
-            ps = conn.prepareStatement(sqlFind);
-            ps.setInt(1, id);
-
-            rs = ps.executeQuery();
-            Categoria categoria = null;
-
-            if (rs.next()) {
-                categoria = new Categoria();
-                categoria.setNome(rs.getString("nome"));
-            }
-            return categoria;
         } finally {
             rs.close();
             ps.close();
@@ -117,7 +93,7 @@ public class CategoriaDAO extends dao.DbConnection {
 
             if (rs.next()) {
                 categoria = new Categoria();
-                categoria.setId(rs.getInt("id"));
+                categoria.setNome(rs.getString("nome"));
             }
             return categoria;
         } finally {

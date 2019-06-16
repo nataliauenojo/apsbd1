@@ -1,5 +1,15 @@
 package gui;
 
+import dao.CategoriaDAO;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.DefaultTableCellRenderer;
+
 public class Categoria extends javax.swing.JFrame {
 
     /**
@@ -7,7 +17,11 @@ public class Categoria extends javax.swing.JFrame {
      */
     public Categoria() {
         initComponents();
-
+        try {
+            loadRecords();
+        } catch (SQLException ex) {
+            Logger.getLogger(Categoria.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -27,8 +41,6 @@ public class Categoria extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         salvar = new javax.swing.JButton();
         remover = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        txtId = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -42,17 +54,17 @@ public class Categoria extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+                {null},
+                {null},
+                {null},
+                {null}
             },
             new String [] {
-                "ID", "Nome"
+                "Nome"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class
+                java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -96,10 +108,6 @@ public class Categoria extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jLabel1.setText("ID");
-
-        txtId.setEditable(false);
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -111,24 +119,16 @@ public class Categoria extends javax.swing.JFrame {
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(0, 20, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel1)
-                            .addComponent(nome))
+                        .addComponent(nome)
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 20, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(31, 31, 31)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -159,11 +159,48 @@ public class Categoria extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNomeActionPerformed
 
     private void salvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvarActionPerformed
+        int dialogResult = JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja salvar esse registro?", "Confirmação?", JOptionPane.YES_NO_OPTION);
 
+        if (dialogResult == JOptionPane.YES_OPTION) {
+            if (jTable1.getModel().getValueAt(jTable1.getSelectedRow(), 0).toString().length() > 0) {
+                try {
+                    updateRecord();
+                    clearInputBoxes();
+                    loadRecords();
+                    return;
+                } catch (SQLException | ParseException ex) {
+                    Logger.getLogger(Categoria.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            try {
+                try {
+                    addNew();
+                    clearInputBoxes();
+                    loadRecords();
+                } catch (ParseException ex) {
+                    Logger.getLogger(Categoria.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
     }//GEN-LAST:event_salvarActionPerformed
 
     private void removerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removerActionPerformed
+        if (!txtNome.getText().isEmpty()) {
+            int dialogResult = JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja excluir esse registro?", "Confirmação?", JOptionPane.YES_NO_OPTION);
 
+            if (dialogResult == JOptionPane.YES_OPTION) {
+                try {
+                    deleteRecord();
+                    loadRecords();
+                    clearInputBoxes();
+
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        }
     }//GEN-LAST:event_removerActionPerformed
 
     /**
@@ -202,7 +239,6 @@ public class Categoria extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -210,8 +246,57 @@ public class Categoria extends javax.swing.JFrame {
     private javax.swing.JLabel nome;
     private javax.swing.JButton remover;
     private javax.swing.JButton salvar;
-    private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtNome;
     // End of variables declaration//GEN-END:variables
+
+    private void loadRecords() throws SQLException {
+        String sql = "SELECT nome FROM Categoria ORDER BY nome;";
+        ResultSetTableModel tableModel = new ResultSetTableModel(sql);
+        jTable1.setModel(tableModel);
+
+        //Adjusting columns 
+        jTable1.getColumnModel().getColumn(0).setWidth(200);
+        jTable1.getColumnModel().getColumn(0).setMinWidth(50);
+        jTable1.getColumnModel().getColumn(0).setMaxWidth(500);
+
+        jTable1.getSelectionModel().addListSelectionListener((ListSelectionEvent event) -> {
+            try {
+                if (jTable1.getSelectedRow() >= 0) {
+                    Object nome = jTable1.getModel().getValueAt(jTable1.getSelectedRow(), 0);
+                    txtNome.setText(nome.toString());
+                }
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        });
+
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(SwingConstants.LEFT);
+        jTable1.getColumnModel().getColumn(0).setCellRenderer(rightRenderer);
+    }
+
+    private void clearInputBoxes() {
+        txtNome.setText("");
+    }
+
+    private void addNew() throws SQLException, ParseException {
+        CategoriaDAO dao = new CategoriaDAO();
+        model.Categoria cat = new model.Categoria();
+        cat.setNome(txtNome.getText());
+        dao.insert(cat);
+    }
+
+    private void updateRecord() throws SQLException, ParseException {
+        CategoriaDAO dao = new CategoriaDAO();
+        model.Categoria cat = new model.Categoria();
+        cat.setNome(txtNome.getText());
+        cat.setAntes(jTable1.getModel().getValueAt(jTable1.getSelectedRow(), 0).toString());
+        dao.update(cat);
+    }
+
+    private void deleteRecord() throws SQLException {
+        CategoriaDAO dao = new CategoriaDAO();
+        dao.remove(txtNome.getText());
+    }
 
 }

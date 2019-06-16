@@ -10,20 +10,22 @@ import model.Produto;
 public class ProdutoDAO extends dao.DbConnection {
 
     private Connection conn;
-    private final String sqlInsert = "INSERT INTO Produto (nome, categoria, preco) VALUES (?, ?, ?)";
-    private final String sqlUpdate = "UPDATE Produto SET nome = ?, categoria =?, preco =? WHERE id = ? ";
+    private final String sqlInsert = "INSERT INTO Produto (id ,nome, quantidade, preco, categoria) VALUES (?, ?, ?, ?, ?)";
+    private final String sqlUpdate = "UPDATE Produto SET id = ?, nome = ?, quantidade = ? , preco = ?, categoria = ? WHERE id = ? ";
     private final String sqlRemove = "DELETE FROM Produto WHERE id = ?";
-    private final String sqlList = "SELECT id, nome, categoria, preco FROM Produto ORDER BY id";
-    private final String sqlFind = "SELECT id, nome, categoria FROM Categoria WHERE id = ?";
+    private final String sqlList = "SELECT id, nome, quantidade, preco, categoria FROM Produto ORDER BY id";
+    private final String sqlFind = "SELECT id, nome, quantidade , preco, categoria FROM Categoria WHERE id = ?";
 
     public void insert(Produto produto) throws SQLException {
         PreparedStatement ps = null;
         try {
             conn = connect();
             ps = conn.prepareStatement(sqlInsert);
-            ps.setString(1, produto.getNome());
-            ps.setInt(2, produto.getCategoria());
-            ps.setDouble(3, produto.getPreco());
+            ps.setInt(1, produto.getId());
+            ps.setString(2, produto.getNome());
+            ps.setInt(3, produto.getQuantidade());
+            ps.setDouble(4, produto.getPreco());
+            ps.setString(5, produto.getCategoria());
             ps.execute();
         } finally {
             ps.close();
@@ -37,10 +39,11 @@ public class ProdutoDAO extends dao.DbConnection {
         try {
             conn = connect();
             ps = conn.prepareStatement(sqlUpdate);
-            ps.setString(1, produto.getNome());
-            ps.setInt(2, produto.getCategoria());
-            ps.setDouble(3, produto.getPreco());
-            ps.setInt(4, produto.getId());
+            ps.setInt(1,produto.getId());
+            ps.setString(2, produto.getNome());
+            ps.setInt(3, produto.getQuantidade());
+            ps.setDouble(4, produto.getPreco());
+            ps.setString (5, produto.getCategoria());
             ps.execute();
         } finally {
             ps.close();
@@ -75,8 +78,9 @@ public class ProdutoDAO extends dao.DbConnection {
                 produto = new Produto();
                 produto.setId(rs.getInt("id"));
                 produto.setNome(rs.getString("nome"));
-                produto.setCategoria(rs.getInt("categoria"));
+                produto.setQuantidade(rs.getInt("quantidade"));
                 produto.setPreco(rs.getDouble("preco"));
+                produto.setCategoria(rs.getString("categoria"));
                 list.add(produto);
             }
             return list;

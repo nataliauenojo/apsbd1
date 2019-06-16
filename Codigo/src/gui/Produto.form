@@ -50,6 +50,7 @@
                               <Component id="nome" min="-2" max="-2" attributes="0"/>
                               <Component id="preco" alignment="1" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel1" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="nome1" alignment="1" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -57,6 +58,7 @@
                               <Component id="jcbCat" max="32767" attributes="0"/>
                               <Component id="txtPreco" alignment="0" pref="200" max="32767" attributes="0"/>
                               <Component id="txtId" alignment="0" pref="200" max="32767" attributes="0"/>
+                              <Component id="txtQtd" alignment="0" pref="200" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
@@ -72,22 +74,27 @@
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <Component id="txtId" alignment="1" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="nome" alignment="3" max="32767" attributes="0"/>
                       <Component id="txtNome" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="categoria" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jcbCat" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="nome1" alignment="3" max="32767" attributes="0"/>
+                      <Component id="txtQtd" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="preco" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txtPreco" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jcbCat" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="categoria" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jScrollPane1" min="-2" pref="151" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="32767" attributes="0"/>
                   <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
@@ -116,15 +123,21 @@
             <Component class="javax.swing.JTable" name="jTable1">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="4" rowCount="4">
+                  <Table columnCount="5" rowCount="4">
                     <Column editable="true" title="ID" type="java.lang.String"/>
                     <Column editable="true" title="Nome" type="java.lang.String"/>
-                    <Column editable="true" title="Categoria" type="java.lang.String"/>
+                    <Column editable="true" title="Quantidade" type="java.lang.Integer"/>
                     <Column editable="true" title="Preco" type="java.lang.Double"/>
+                    <Column editable="true" title="Categoria" type="java.lang.String"/>
                   </Table>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                   <TableColumnModel selectionModel="0">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
                     <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                       <Title/>
                       <Editor/>
@@ -254,6 +267,16 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtIdActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="nome1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Quantidade"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="txtQtd">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtQtdActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

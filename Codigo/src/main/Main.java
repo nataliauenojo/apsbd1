@@ -5,7 +5,6 @@
  */
 package main;
 
-import gui.Venda;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -21,7 +20,7 @@ public class Main {
      *main, you fucker
      */
     public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException, ParseException  {
-         new Venda().setVisible(true);
+         new gui.Main().setVisible(true);
     }
 
 }
