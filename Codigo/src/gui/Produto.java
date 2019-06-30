@@ -1,5 +1,18 @@
 package gui;
 
+import dao.CategoriaDAO;
+import dao.ProdutoDAO;
+import java.math.BigInteger;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.DefaultTableCellRenderer;
+
 public class Produto extends javax.swing.JFrame {
 
     /**
@@ -7,7 +20,12 @@ public class Produto extends javax.swing.JFrame {
      */
     public Produto() {
         initComponents();
-
+        try {
+            fillCBCat();
+            loadRecords();
+        } catch (SQLException ex) {
+            Logger.getLogger(Produto.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -217,7 +235,30 @@ public class Produto extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNomeActionPerformed
 
     private void salvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvarActionPerformed
+        int dialogResult = JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja salvar esse registro?", "Confirmação?", JOptionPane.YES_NO_OPTION);
 
+        if (dialogResult == JOptionPane.YES_OPTION) {
+            if (!txtId.getText().isEmpty()) {
+
+                try {
+                    updateRecord();
+                    clearInputBoxes();
+                    loadRecords();
+                    return;
+                } catch (SQLException | ParseException ex) {
+                    Logger.getLogger(Produto.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+
+            try {
+                addNew();
+                clearInputBoxes();
+                loadRecords();
+            } catch (ParseException | SQLException ex) {
+                Logger.getLogger(Produto.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }//GEN-LAST:event_salvarActionPerformed
 
     private void txtPrecoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrecoActionPerformed
@@ -225,7 +266,20 @@ public class Produto extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPrecoActionPerformed
 
     private void removerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removerActionPerformed
+        if (!txtNome.getText().isEmpty()) {
+            int dialogResult = JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja excluir esse registro?", "Confirmação?", JOptionPane.YES_NO_OPTION);
 
+            if (dialogResult == JOptionPane.YES_OPTION) {
+                try {
+                    deleteRecord();
+                    loadRecords();
+                    clearInputBoxes();
+
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        }
     }//GEN-LAST:event_removerActionPerformed
 
     private void txtIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdActionPerformed
@@ -233,7 +287,7 @@ public class Produto extends javax.swing.JFrame {
     }//GEN-LAST:event_txtIdActionPerformed
 
     private void cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarActionPerformed
-
+        clearInputBoxes();
     }//GEN-LAST:event_cancelarActionPerformed
 
     private void txtQtdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtQtdActionPerformed
@@ -294,5 +348,100 @@ public class Produto extends javax.swing.JFrame {
     private javax.swing.JTextField txtPreco;
     private javax.swing.JTextField txtQtd;
     // End of variables declaration//GEN-END:variables
+
+    final void fillCBCat() throws SQLException {
+        CategoriaDAO dao = new CategoriaDAO();
+        List<model.Categoria> categoria = dao.list();
+        jcbCat.removeAllItems();
+        for (model.Categoria p : categoria) {
+            jcbCat.addItem(p.getNome());
+        }
+    }
+
+    private void loadRecords() throws SQLException {
+        String sql = "SELECT id, nome, quantidade, preco, categoria FROM Produto ORDER BY id;";
+        ResultSetTableModel tableModel = new ResultSetTableModel(sql);
+        jTable1.setModel(tableModel);
+
+        //Adjusting columns 
+        jTable1.getColumnModel().getColumn(0).setWidth(200);
+        jTable1.getColumnModel().getColumn(0).setMinWidth(50);
+        jTable1.getColumnModel().getColumn(0).setMaxWidth(200);
+
+        jTable1.getSelectionModel().addListSelectionListener((ListSelectionEvent event) -> {
+            if (jTable1.getSelectedRow() >= 0) {
+                Object id = jTable1.getModel().getValueAt(jTable1.getSelectedRow(), 0);
+                Object nome = jTable1.getModel().getValueAt(jTable1.getSelectedRow(), 1);
+                Object quantidade = jTable1.getModel().getValueAt(jTable1.getSelectedRow(), 2);
+                Object preco = jTable1.getModel().getValueAt(jTable1.getSelectedRow(), 3);
+                Object categoria = jTable1.getModel().getValueAt(jTable1.getSelectedRow(), 4);
+                txtId.setText(id.toString());
+                txtNome.setText(nome.toString());
+                txtPreco.setText(preco.toString());
+                txtQtd.setText(quantidade.toString());
+
+                CategoriaDAO cat = new CategoriaDAO();
+
+                try {
+                    jcbCat.setSelectedItem(cat.find(categoria.toString()).getNome());
+                } catch (SQLException ex) {
+                    Logger.getLogger(Produto.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+        });
+
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(SwingConstants.LEFT);
+        jTable1.getColumnModel().getColumn(0).setCellRenderer(rightRenderer);
+    }
+
+    private void clearInputBoxes() {
+        txtNome.setText("");
+        txtId.setText("");
+        txtPreco.setText("");
+        txtQtd.setText("");
+    }
+
+    private void addNew() throws SQLException, ParseException {
+        ProdutoDAO dao = new ProdutoDAO();
+        model.Produto prod = new model.Produto();
+        prod.setNome(txtNome.getText());
+
+        CategoriaDAO cat = new CategoriaDAO();
+        List<model.Categoria> categoria = cat.list();
+
+        for (model.Categoria p : categoria) {
+            if (p.getNome().equals(jcbCat.getSelectedItem().toString())) {
+                prod.setCategoria(p.getNome());
+            }
+        }
+        prod.setPreco(Double.parseDouble(txtPreco.getText()));
+
+        dao.insert(prod);
+    }
+
+    private void updateRecord() throws SQLException, ParseException {
+        ProdutoDAO dao = new ProdutoDAO();
+        model.Produto prod = new model.Produto();
+        prod.setNome(txtNome.getText());
+        prod.setId(Integer.parseInt(txtId.getText()));
+
+        CategoriaDAO cat = new CategoriaDAO();
+        List<model.Categoria> categoria = cat.list();
+
+        for (model.Categoria p : categoria) {
+            if (p.getNome().equals(jcbCat.getSelectedItem().toString())) {
+                prod.setCategoria(p.getNome());
+            }
+        }
+        prod.setPreco(Double.parseDouble(txtPreco.getText()));
+        dao.update(prod);
+    }
+
+    private void deleteRecord() throws SQLException {
+        ProdutoDAO dao = new ProdutoDAO();
+        dao.remove(Integer.parseInt(txtId.getText()));
+    }
 
 }

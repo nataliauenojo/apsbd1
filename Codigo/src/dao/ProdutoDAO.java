@@ -56,7 +56,7 @@ public class ProdutoDAO extends dao.DbConnection {
         try {
             conn = connect();
             ps = conn.prepareStatement(sqlRemove);
-            ps.setString(1, Integer.toString(id));
+            ps.setInt(1, id);
             ps.execute();
         } finally {
             ps.close();
