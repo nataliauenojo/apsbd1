@@ -1,4 +1,3 @@
-
 -- -----------------------------------------------------
 -- Schema mydb
 -- -----------------------------------------------------
@@ -13,30 +12,29 @@ USE `mydb` ;
 -- -----------------------------------------------------
 -- Table `mydb`.`Categoria`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Categoria` ;
+DROP TABLE IF EXISTS Categoria ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`Categoria` (
-  `Nome` INT NOT NULL,
-  PRIMARY KEY (`Nome`))
+CREATE TABLE IF NOT EXISTS Categoria (
+  `nome` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`nome`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `mydb`.`Produto`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Produto` ;
+DROP TABLE IF EXISTS Produto ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`Produto` (
-  `codigo` INT NOT NULL,
-  `Nome` VARCHAR(45) NULL,
-  `Quantidade` INT NULL,
-  `Preço` VARCHAR(45) NULL,
-  `Categoria_Nome` INT NOT NULL,
-  PRIMARY KEY (`codigo`, `Categoria_Nome`),
-  CONSTRAINT `fk_Produto_Categoria1`
-    FOREIGN KEY (`Categoria_Nome`)
-    REFERENCES `mydb`.`Categoria` (`Nome`)
+CREATE TABLE IF NOT EXISTS Produto (
+  `id` INT NOT NULL,
+  `nome` VARCHAR(45) NULL,
+  `quantidade` INT NULL,
+  `preco` VARCHAR(45) NULL,
+  `categoria` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`, `categoria`),
+  CONSTRAINT `fk_Produto_Categoria`
+    FOREIGN KEY (`categoria`)
+    REFERENCES `mydb`.`Categoria` (`nome`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
